@@ -1,4 +1,4 @@
-import { BEE_LEVELS, LEVEL_NAMES, MAX_MULTIPLIER, boosted, emptyInfo, formatMultiplier, honeyChance, multiplierOf, oddsFor, payoutFor, START } from '../game/math.ts';
+import { BEE_LEVELS, LEVEL_NAMES, MAX_MULTIPLIER, RTP, boosted, emptyInfo, formatMultiplier, honeyChance, multiplierOf, oddsFor, payoutFor, START } from '../game/math.ts';
 import { formatPercent } from '../game/money.ts';
 import { Modal } from './Modal.tsx';
 
@@ -57,8 +57,8 @@ export function RulesModal({ onClose }: { onClose: () => void }) {
       <p>
         The odds on a cell count every way the bees could be hidden that agrees with all the clues you can see. Picking honey
         pays exactly 1 ÷ those odds, so every pick is a fair bet, whether it's a wild guess or a cell the clues all but
-        prove. The 3% house edge is taken once, from the whole round: the multiplier is 97% of the fair value, rounded down.
-        However you play, the return is 97% at most. Reading the board lowers your risk, not the edge.
+        prove. The {Math.round((1 - RTP) * 100)}% house edge is taken once, from the whole round: the multiplier is {Math.round(RTP * 100)}% of the fair value, rounded down.
+        However you play, the return is {Math.round(RTP * 100)}% at most. Reading the board lowers your risk, not the edge.
       </p>
 
       <h4>PROVABLY FAIR</h4>

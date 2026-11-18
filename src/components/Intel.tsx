@@ -3,6 +3,7 @@ import {
   BEE_LEVELS,
   LEVEL_NAMES,
   MAX_MULTIPLIER,
+  RTP,
   boosted,
   emptyInfo,
   formatMultiplier,
@@ -87,7 +88,7 @@ export function Intel({
           <DropIcon />
           <span>No bees nearby: the cells around it open for free.</span>
         </div>
-        <p className="intel-foot">Top prize ×{MAX_MULTIPLIER} · every boost matches its odds · RTP 97%</p>
+        <p className="intel-foot">Top prize ×{MAX_MULTIPLIER} · every boost matches its odds · RTP {Math.round(RTP * 100)}%</p>
       </aside>
     );
   }
@@ -160,7 +161,7 @@ export function Intel({
       </dl>
       <p className="intel-foot">
         Odds count every bee layout that fits the clues. Boost = 1 ÷ chance, so reading the board cuts your risk, not the
-        house edge: RTP 97%.
+        house edge: RTP {Math.round(RTP * 100)}%.
       </p>
     </aside>
   );

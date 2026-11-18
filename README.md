@@ -8,7 +8,7 @@ it, and every closed cell shows its exact chance of honey given all the clues. C
 npm install
 npm run dev      # http://localhost:5188
 npm run build
-npm run rtp      # exact RTP check over every bee layout (fails if any strategy beats 97%)
+npm run rtp      # exact RTP check over every bee layout (fails if any strategy beats 96%)
 ```
 
 The game plays against the game API (FeedingFranzeeAPI, `api/hive`). In dev, Vite proxies `/api` to
@@ -16,7 +16,7 @@ http://localhost:5003 and the API's `/api/dev-token` signs in a demo player. Pro
 with the lobby's `?token=`. Open the game with `?demo` (or build with `VITE_DEMO=1`) to play offline against the
 in-browser engine (`createLocalEngine()` in `src/game/engine.ts`, demo wallet R1,000).
 
-## Math (RTP 97%)
+## Math (RTP 96%)
 
 Every way of hiding the bees is equally likely: C(19, bees) layouts, from 969 (3 bees) to 92,378 (10). Before each
 pick, the odds of a closed cell come from counting the layouts that agree with every clue on the board:
@@ -25,25 +25,25 @@ pick, the odds of a closed cell come from counting the layouts that agree with e
 P(honey in cell) = layouts with honey in that cell / layouts that fit the clues
 boost            = 1 / P
 fair value       = product of the boosts of every honey pick
-multiplier       = floor(970 × fair value) / 1000          (capped at ×500)
+multiplier       = floor(960 × fair value) / 1000          (capped at ×500)
 payout           = floor(bet × multiplier to the cent)
 ```
 
-Every pick is a fair bet at its true odds, whatever the player knows, so the fair value is a martingale and the 3% is
+Every pick is a fair bet at its true odds, whatever the player knows, so the fair value is a martingale and the 4% is
 taken once from the whole round. A cell the clues prove safe has boost ×1: reading the board lowers the risk, never the
-house edge. No strategy, clue-reading or cash-out timing returns more than 97%. Products are exact (`BigInt` /
+house edge. No strategy, clue-reading or cash-out timing returns more than 96%. Products are exact (`BigInt` /
 `BigInteger`), so client, server and verifier never disagree on a rounding edge. See `src/game/math.ts`.
 
 | Bees | Name    | First cell honey | Cash out after it | Return at R10 |
 |-----:|---------|-----------------:|------------------:|--------------:|
-| 3    | Calm    | 84%              | ×1.151            | 96.93%        |
-| 5    | Buzzing | 74%              | ×1.316            | 96.97%        |
-| 7    | Angry   | 63%              | ×1.535            | 96.95%        |
-| 10   | Swarm   | 47%              | ×2.047            | 96.96%        |
+| 3    | Calm    | 84%              | ×1.140            | 96.00%        |
+| 5    | Buzzing | 74%              | ×1.302            | 95.94%        |
+| 7    | Angry   | 63%              | ×1.520            | 96.00%        |
+| 10   | Swarm   | 47%              | ×2.026            | 95.97%        |
 
 `npm run rtp` plays 13 strategies per level, plus clearing the whole hive at 3 bees (one pick in each kind of cell,
 safest-first and riskiest-first runs, cash-out targets), on every possible bee layout, so its numbers are exact. The fair value always comes
-to exactly 97.0000%. The real returns, after rounding down, run from 96.53% (one pick at R1) to 96.998% (R10). The
+to exactly 96.0000%. The real returns, after rounding down, run from 95.65% (R1) to 96.00% (R10) and never above it. The
 rounding loss is under a cent per round, so it shrinks as the stake grows.
 
 Clearing every honey cell settles the round (`cleared`), and ×500 settles it as the top prize (`maxed`). The cap only

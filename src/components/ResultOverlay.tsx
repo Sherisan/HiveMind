@@ -1,5 +1,5 @@
 import type { RoundView } from '../game/engine.ts';
-import { formatMultiplier } from '../game/math.ts';
+import { MAX_MULTIPLIER, formatMultiplier } from '../game/math.ts';
 import { formatMoney } from '../game/money.ts';
 
 export function ResultOverlay({
@@ -21,7 +21,7 @@ export function ResultOverlay({
   const view = {
     cashed: { title: 'SWEET!', amount: win, meta: `Cashed out at ${formatMultiplier(round.multiplier)} after ${cells}` },
     cleared: { title: 'HIVE CLEARED!', amount: win, meta: `Every drop of honey found · ${formatMultiplier(round.multiplier)}` },
-    maxed: { title: 'MAX WIN!', amount: win, meta: `${formatMultiplier(round.multiplier)} · the top prize` },
+    maxed: { title: 'MAX WIN!', amount: win, meta: `${formatMultiplier(round.multiplier)} · ${round.multiplier >= MAX_MULTIPLIER ? 'the top prize' : 'max win reached'}` },
     stung: {
       title: 'STUNG!',
       amount: `−${formatMoney(round.bet, currency)}`,

@@ -12,17 +12,17 @@ import { ALL_CELLS, CELL_COUNT, NEIGHBORS, has, popcount } from './hex.ts';
  * Picking honey multiplies the round's fair value by 1 / P, the cell's boost. The RTP is applied ONCE, to the whole
  * round:
  *
- *     multiplier = floor(970 × fair value) / 1000        (fair value = Π layouts / Π layouts-with-honey-there)
+ *     multiplier = floor(960 × fair value) / 1000        (fair value = Π layouts / Π layouts-with-honey-there)
  *
  * capped at ×500. Whatever the player picks, using the clues or not, the fair value is a martingale: every pick is a
- * fair bet at its true odds. So no strategy returns more than 97%, and rounding down only takes a little more off.
+ * fair bet at its true odds. So no strategy returns more than 96%, and rounding down only takes a little more off.
  * A cell the clues prove safe has boost ×1: reading the board lowers the risk, never the house edge.
  *
  * Products are exact (BigInt), so the client, the server and the verifier never disagree on a rounding edge.
  */
 
-export const RTP = 0.97;
-const RTP_MILLI = 970n;
+export const RTP = 0.96;
+const RTP_MILLI = 960n;
 /** Top prize. Reaching it settles the round automatically. */
 export const MAX_MULTIPLIER = 500;
 const MAX_MILLI = BigInt(MAX_MULTIPLIER * 1000);
@@ -101,7 +101,7 @@ export const boosted = (v: Fair, o: Odds, cell: number): Fair => ({
   den: v.den * BigInt(honeyLayouts(o, cell)),
 });
 
-/** Cash-out multiplier for a fair value: 97% of it, floored to 0.001, capped at ×500. */
+/** Cash-out multiplier for a fair value: 96% of it, floored to 0.001, capped at ×500. */
 export function multiplierOf(v: Fair): number {
   const milli = (RTP_MILLI * v.num) / v.den;
   return Number(milli > MAX_MILLI ? MAX_MILLI : milli) / 1000;

@@ -2,15 +2,16 @@
  * Exact RTP check: every strategy below is played on EVERY possible bee layout (C(19, bees) of them, each equally
  * likely), so the returns are exact, not sampled.
  *
- *   fair     97% × the fair value when the round ends: must be exactly 97.0000% (the fair value is a martingale)
+ *   fair     96% × the fair value when the round ends: must be exactly 96.0000% (the fair value is a martingale)
  *   R10, R1  what the round really pays at that stake: rounded down to 0.001 and to the cent, capped at ×500
  *
- * Fails (exit 1) if any strategy returns more than 97%.
+ * Fails (exit 1) if any strategy returns more than 96%.
  *   npm run rtp
  */
 import { CELL_COUNT, clueAt, has, popcount } from '../src/game/hex.ts';
 import {
   BEE_LEVELS,
+  RTP,
   START,
   boosted,
   emptyInfo,
@@ -107,7 +108,7 @@ function run(level: number, strategy: Strategy) {
         break;
       }
     }
-    fair += 0.97 * fairEnd;
+    fair += RTP * fairEnd;
     paid10 += payoutFor(10, ended);
     paid1 += payoutFor(1, ended);
   }
@@ -125,12 +126,13 @@ for (const level of BEE_LEVELS) {
     const r = run(level, s);
     console.log(`  ${s.name.padEnd(30)} ${pct(r.fair)} ${pct(r.r10)} ${pct(r.r1)}`);
     worst = Math.max(worst, r.r10, r.r1);
-    if (Math.abs(r.fair - 0.97) > 1e-9 || r.r10 > 0.97 || r.r1 > 0.97) broken = true;
+    // 1e-9: float sums of exact cent payouts (e.g. 7 bees, one pick: x1.52 at 12/19 is exactly 96%) can land a hair over.
+    if (Math.abs(r.fair - RTP) > 1e-9 || r.r10 > RTP + 1e-9 || r.r1 > RTP + 1e-9) broken = true;
   }
 }
 console.log(`\nBest real return: ${pct(worst).trim()}   (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
 if (broken) {
-  console.log('FAIL: a strategy beat 97%, or the fair value is not a martingale');
+  console.log('FAIL: a strategy beat 96%, or the fair value is not a martingale');
   process.exit(1);
 }
-console.log('OK: the fair value is a martingale, and no strategy returns more than 97%');
+console.log('OK: the fair value is a martingale, and no strategy returns more than 96%');
